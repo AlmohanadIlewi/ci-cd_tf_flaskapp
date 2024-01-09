@@ -11,17 +11,15 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
-          
       # Wir installieren die dependencies (terraform, aws)
       - id: install-aws-cli
         uses: unfor19/install-aws-cli-action@v1
       - name: Check if aws cli is installed
         run: |
           aws --version
-      - name: install terraform    
-      - uses: hashicorp/setup-terraform@v2
+      - name : install terraform 
+        uses: hashicorp/setup-terraform@v2
       - run: terraform version
-
       # Konfiguriere die AWS CLI
       - run: mkdir -p ~/.aws/
       - run: echo "$super_secret" > ~/.aws/credentials
@@ -32,8 +30,8 @@ jobs:
       - run: aws s3 ls --region eu-central-1 --profile techstarter
       # Create terraform
       - run: terraform -chdir=terraform/ init -backend-config="bucket=cicd-bucket123"
-        env: 
-          STATE_BUCKET: ${{ secrets.TF_BUCKET }}
+        env:   
+          STATE_BUCKET: ${{ secrets.TF_CONFIG }}
       - run: terraform -chdir=terraform/ plan
       - run: terraform -chdir=terraform/ apply -auto-approve
       - run: |
@@ -55,10 +53,9 @@ jobs:
           mkdir -p /home/runner/.ssh/
           cp ssh_key /home/runner/.ssh/id_rsa
           chmod 700 /home/runner/.ssh/id_rsa
-          
       # Run the ansible playbook
       - name: Run ansible
         run: |
           service ssh status
           export ANSIBLE_HOST_KEY_CHECKING=False
-          ansible-playbook --private-key /home/runner/.ssh/id_rsa -u ubuntu -i ansible/inventory.ini ansible/playbooks/playbook.yml --extra-vars "ansible_ssh_private_key_file=/home/runner/.ssh/id_rsa"
+          ansible-playbook  --private-key /home/runner/.ssh/id_rsa -u ubuntu -i ansible/inventory.ini ansible/playbooks/playbook.yml --extra-vars "ansible_ssh_private_key_file=/home/runner/.ssh/id_rsa"
