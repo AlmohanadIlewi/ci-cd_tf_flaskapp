@@ -11,6 +11,7 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
+          
       # Wir installieren die dependencies (terraform, aws)
       - id: install-aws-cli
         uses: unfor19/install-aws-cli-action@v1
