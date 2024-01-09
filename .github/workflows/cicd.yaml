@@ -20,14 +20,17 @@ jobs:
       - name: install terraform    
       - uses: hashicorp/setup-terraform@v2
       - run: terraform version
+
       # Konfiguriere die AWS CLI
       - run: mkdir -p ~/.aws/
       - run: echo "$super_secret" > ~/.aws/credentials
+
         env: # Erstelle ein Github Secret AWS_CONFIG!
           super_secret: ${{ secrets.AWS_CONFIG }}
       - run: cat ~/.aws/credentials
       - run: aws configure list-profiles
       - run: aws s3 ls --region eu-central-1 --profile techstarter
+
       # Create terraform
       - run: terraform -chdir=terraform/ init -backend-config="bucket=cicd-bucket123"
         env: 
@@ -46,6 +49,7 @@ jobs:
           tail -n +2 ssh > ssh_key
           cat ssh_key
         shell: bash
+
       # Setup SSH for ansible
       - name: Setup SSH 
         shell: bash
@@ -53,6 +57,7 @@ jobs:
           mkdir -p /home/runner/.ssh/
           cp ssh_key /home/runner/.ssh/id_rsa
           chmod 700 /home/runner/.ssh/id_rsa
+          
       # Run the ansible playbook
       - name: Run ansible
         run: |
