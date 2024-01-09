@@ -48,7 +48,6 @@ jobs:
           tail -n +2 ssh > ssh_key
           cat ssh_key
         shell: bash
-
       # Setup SSH for ansible
       - name: Setup SSH 
         shell: bash
